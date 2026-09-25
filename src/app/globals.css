@@ -1,26 +1,137 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #fafafa;
+  --foreground: #0f172a;
+  --card: #ffffff;
+  --muted: #f1f5f9;
+  --muted-foreground: #64748b;
+  --border: #e2e8f0;
+  --primary: #4f46e5;
+  --primary-foreground: #ffffff;
+  --accent: #eef2ff;
+  --accent-foreground: #4338ca;
+  --destructive: #dc2626;
+  --success: #16a34a;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0b0f1a;
+    --foreground: #e2e8f0;
+    --card: #111827;
+    --muted: #1e293b;
+    --muted-foreground: #94a3b8;
+    --border: #1f2937;
+    --primary: #6366f1;
+    --primary-foreground: #ffffff;
+    --accent: #1e1b4b;
+    --accent-foreground: #c7d2fe;
+    --destructive: #f87171;
+    --success: #4ade80;
+  }
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-success: var(--success);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+* {
+  border-color: var(--border);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Minimal typography for rendered Markdown (lesson articles, AI answers). */
+.prose-edu {
+  line-height: 1.7;
+  overflow-wrap: anywhere;
+}
+.prose-edu > * + * {
+  margin-top: 0.9em;
+}
+.prose-edu h1 {
+  font-size: 1.6em;
+  font-weight: 700;
+  margin-top: 1.4em;
+}
+.prose-edu h2 {
+  font-size: 1.3em;
+  font-weight: 700;
+  margin-top: 1.4em;
+}
+.prose-edu h3 {
+  font-size: 1.1em;
+  font-weight: 600;
+  margin-top: 1.2em;
+}
+.prose-edu :first-child {
+  margin-top: 0;
+}
+.prose-edu ul {
+  list-style: disc;
+  padding-left: 1.4em;
+}
+.prose-edu ol {
+  list-style: decimal;
+  padding-left: 1.4em;
+}
+.prose-edu li + li {
+  margin-top: 0.3em;
+}
+.prose-edu a {
+  color: var(--primary);
+  text-decoration: underline;
+}
+.prose-edu code {
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 0.9em;
+  background: var(--muted);
+  border-radius: 4px;
+  padding: 0.1em 0.35em;
+}
+.prose-edu pre {
+  background: #0f172a;
+  color: #e2e8f0;
+  border-radius: 8px;
+  padding: 1em;
+  overflow-x: auto;
+  font-size: 0.875em;
+}
+.prose-edu pre code {
+  background: transparent;
+  padding: 0;
+  color: inherit;
+}
+.prose-edu blockquote {
+  border-left: 3px solid var(--primary);
+  padding-left: 1em;
+  color: var(--muted-foreground);
+}
+.prose-edu table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9em;
+}
+.prose-edu th,
+.prose-edu td {
+  border: 1px solid var(--border);
+  padding: 0.4em 0.6em;
+  text-align: left;
 }
