@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { GraduationCap, Presentation, Shield, Sparkles, ArrowRight } from "lucide-react";
 import { login } from "@/app/actions/auth";
 
@@ -37,6 +37,7 @@ const DEMO_CARDS = [
 
 export function DemoStrip() {
   const [loadingRole, setLoadingRole] = useState<string | null>(null);
+  const router = useRouter();
 
   async function handleQuickLogin(email: string, pass: string, role: string) {
     setLoadingRole(role);
@@ -45,7 +46,7 @@ export function DemoStrip() {
     fd.append("password", pass);
     try {
       await login({}, fd);
-      window.location.href = role === "admin" ? "/admin" : role === "instructor" ? "/instructor" : "/dashboard";
+      router.push(role === "admin" ? "/admin" : role === "instructor" ? "/instructor" : "/dashboard");
     } catch {
       setLoadingRole(null);
     }
