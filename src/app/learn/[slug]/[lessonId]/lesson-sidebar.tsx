@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowLeft, CheckCircle2, Circle, FileText, Lock, PlayCircle, Type } from "lucide-react";
+import { ArrowLeft, Award, CheckCircle2, Circle, FileText, Lock, PlayCircle, Type } from "lucide-react";
 import type { OutlineSection } from "@/lib/learning";
 import { cn } from "@/lib/utils";
 
@@ -75,7 +75,14 @@ export function LessonSidebar({ slug, courseTitle, sections, currentLessonId, co
             <div className="mt-3 h-2 overflow-hidden rounded-full bg-muted">
               <div className="h-full bg-primary transition-all" style={{ width: `${progress}%` }} />
             </div>
-            <p className="mt-1 text-xs text-muted-foreground">{progress}% complete</p>
+            <div className="mt-1 flex items-center justify-between text-xs text-muted-foreground">
+              <span>{progress}% complete</span>
+              {progress === 100 && (
+                <span className="flex items-center gap-1 font-semibold text-success">
+                  <Award className="size-3.5" /> Certified
+                </span>
+              )}
+            </div>
           </>
         )}
       </div>

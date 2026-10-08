@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { Bot, BookOpen, Loader2, SendHorizontal, Trash2, User } from "lucide-react";
+import { Bot, BookOpen, Check, Copy, Loader2, SendHorizontal, Sparkles, Trash2, User } from "lucide-react";
 import { toast } from "sonner";
 import { clearChatHistory } from "@/app/actions/ai";
 import { Markdown } from "@/components/markdown";
@@ -31,11 +31,19 @@ export function TutorChat({ courseId, lessonId, slug, enabled, initialMessages }
   const [messages, setMessages] = useState<Message[]>(initialMessages);
   const [input, setInput] = useState("");
   const [streaming, setStreaming] = useState(false);
+  const [copiedId, setCopiedId] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
   }, [messages]);
+
+  function copyMessage(id: string, text: string) {
+    navigator.clipboard.writeText(text);
+    setCopiedId(id);
+    toast.success("Copied to clipboard!");
+    setTimeout(() => setCopiedId(null), 2000);
+  }
 
   async function send(text: string) {
     const message = text.trim();
@@ -114,8 +122,13 @@ export function TutorChat({ courseId, lessonId, slug, enabled, initialMessages }
             <Bot className="size-4" />
           </span>
           <div>
-            <div className="text-sm font-semibold">AI Tutor</div>
-            <div className="text-xs text-muted-foreground">Answers from this course&apos;s lessons</div>
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-semibold">AI Tutor</span>
+              <span className="inline-flex items-center gap-1 rounded-full bg-success/15 px-2 py-0.2 text-[10px] font-medium text-success">
+                <span className="size-1.5 rounded-full bg-success animate-pulse" /> Grounded
+              </span>
+            </div>
+            <div className="text-xs text-muted-foreground">Answers grounded in this course&apos;s lessons</div>
           </div>
         </div>
         {messages.length > 0 && (
@@ -134,7 +147,7 @@ export function TutorChat({ courseId, lessonId, slug, enabled, initialMessages }
                 <button
                   key={s}
                   onClick={() => send(s)}
-                  className="rounded-full border px-3 py-1.5 text-xs hover:border-primary hover:text-primary"
+                  className="rounded-full border px-3 py-1.5 text-xs hover:border-primary hover:text-primary transition-colors"
                 >
                   {s}
                 </button>
@@ -153,14 +166,28 @@ export function TutorChat({ courseId, lessonId, slug, enabled, initialMessages }
             >
               {m.role === "user" ? <User className="size-3.5" /> : <Bot className="size-3.5" />}
             </span>
-            <div className="min-w-0 flex-1 text-sm">
-              {m.role === "user" ? (
-                <p className="whitespace-pre-wrap pt-1">{m.content}</p>
-              ) : m.content ? (
-                <Markdown>{m.content}</Markdown>
-              ) : (
-                <Loader2 className="mt-1.5 size-4 animate-spin text-muted-foreground" />
-              )}
+            <div className="min-w-0 flex-1 text-sm group">
+              <div className="flex items-start justify-between gap-2">
+                <div className="flex-1">
+                  {m.role === "user" ? (
+                    <p className="whitespace-pre-wrap pt-1">{m.content}</p>
+                  ) : m.content ? (
+                    <Markdown>{m.content}</Markdown>
+                  ) : (
+                    <Loader2 className="mt-1.5 size-4 animate-spin text-muted-foreground" />
+                  )}
+                </div>
+                {m.role === "assistant" && m.content && (
+                  <button
+                    type="button"
+                    onClick={() => copyMessage(m.id, m.content)}
+                    className="opacity-0 group-hover:opacity-100 transition-opacity p-1 text-muted-foreground hover:text-foreground rounded"
+                    title="Copy answer"
+                  >
+                    {copiedId === m.id ? <Check className="size-3.5 text-success" /> : <Copy className="size-3.5" />}
+                  </button>
+                )}
+              </div>
               {m.sources && m.sources.length > 0 && m.content && (
                 <div className="mt-2 flex flex-wrap items-center gap-1.5">
                   <span className="text-xs text-muted-foreground">Sources:</span>
@@ -168,7 +195,7 @@ export function TutorChat({ courseId, lessonId, slug, enabled, initialMessages }
                     <Link
                       key={s.lesson}
                       href={`/learn/${slug}/${s.lesson}`}
-                      className="inline-flex items-center gap-1 rounded-full bg-muted px-2 py-0.5 text-xs hover:text-primary"
+                      className="inline-flex items-center gap-1 rounded-full bg-muted px-2 py-0.5 text-xs hover:text-primary transition-colors"
                     >
                       <BookOpen className="size-3" /> {s.title}
                     </Link>
@@ -179,6 +206,24 @@ export function TutorChat({ courseId, lessonId, slug, enabled, initialMessages }
           </div>
         ))}
       </div>
+
+      {messages.length > 0 && !streaming && (
+        <div className="flex items-center gap-1.5 border-t bg-muted/20 px-3 py-1.5 overflow-x-auto text-[11px] text-muted-foreground">
+          <span className="shrink-0 flex items-center gap-1">
+            <Sparkles className="size-3 text-primary" /> Suggestions:
+          </span>
+          {["Explain simply", "Summarize in 3 bullets", "Give code example", "Quiz me on this"].map((s) => (
+            <button
+              key={s}
+              type="button"
+              onClick={() => send(s)}
+              className="shrink-0 rounded-full border bg-card px-2 py-0.5 hover:border-primary hover:text-primary transition-colors"
+            >
+              {s}
+            </button>
+          ))}
+        </div>
+      )}
 
       <form
         className="flex items-end gap-2 border-t p-3"

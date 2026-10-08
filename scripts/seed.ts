@@ -43,8 +43,13 @@ async function main() {
   if (process.env.NODE_ENV === "production" && !process.argv.includes("--force")) {
     throw new Error("Refusing to seed demo accounts in production. Pass --force if you really mean it.");
   }
-  const uri = process.env.MONGODB_URI;
-  if (!uri || uri.includes("<user>")) throw new Error("Set MONGODB_URI in .env.local first.");
+  let uri = process.env.MONGODB_URI;
+  if (!uri || uri.includes("<user>")) {
+    const { MongoMemoryServer } = await import("mongodb-memory-server");
+    const mem = await MongoMemoryServer.create();
+    uri = mem.getUri();
+    console.log(`• Seed using in-memory MongoDB: ${uri}`);
+  }
   await mongoose.connect(uri, { dbName: "edumind" });
 
   const [, instructor, student] = await Promise.all(DEMO_USERS.map(upsertUser));

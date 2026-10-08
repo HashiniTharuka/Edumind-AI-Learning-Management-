@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { CheckCircle2, RotateCcw, Trophy, XCircle } from "lucide-react";
+import { CheckCircle2, Lightbulb, RotateCcw, Trophy, XCircle } from "lucide-react";
 import { toast } from "sonner";
 import { submitQuiz, type QuizResult } from "@/app/actions/quizzes";
 import { Button } from "@/components/ui/button";
@@ -107,7 +107,10 @@ export function QuizPanel({ quizId, questions, best }: Props) {
                   })}
                 </div>
                 {graded?.explanation && (
-                  <p className="mt-3 rounded-lg bg-muted px-3 py-2 text-sm text-muted-foreground">{graded.explanation}</p>
+                  <div className="mt-3 flex items-start gap-2 rounded-lg bg-muted/80 p-3 text-sm text-muted-foreground border border-border/50">
+                    <Lightbulb className="size-4 shrink-0 text-amber-500 mt-0.5" />
+                    <p className="flex-1">{graded.explanation}</p>
+                  </div>
                 )}
               </Card>
             </li>
@@ -116,9 +119,20 @@ export function QuizPanel({ quizId, questions, best }: Props) {
       </ol>
 
       {!result && (
-        <Button onClick={submit} disabled={!answeredAll || pending}>
-          {pending ? "Checking…" : answeredAll ? "Submit answers" : `Answer all ${questions.length} questions`}
-        </Button>
+        <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
+          <div className="text-sm text-muted-foreground flex items-center gap-2">
+            <span className="font-medium text-foreground">{answers.filter((a) => a >= 0).length}</span> of {questions.length} answered
+            <div className="h-1.5 w-24 bg-muted rounded-full overflow-hidden">
+              <div
+                className="h-full bg-primary transition-all"
+                style={{ width: `${(answers.filter((a) => a >= 0).length / Math.max(1, questions.length)) * 100}%` }}
+              />
+            </div>
+          </div>
+          <Button onClick={submit} disabled={!answeredAll || pending} className="px-6">
+            {pending ? "Checking…" : answeredAll ? "Submit answers" : `Complete remaining questions`}
+          </Button>
+        </div>
       )}
     </div>
   );

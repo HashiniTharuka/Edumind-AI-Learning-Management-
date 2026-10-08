@@ -71,6 +71,35 @@ export default async function CoursesPage({ searchParams }: PageProps<"/courses"
         <Button type="submit">Search</Button>
       </form>
 
+      {/* 1-Click Interactive Category Filter Pills */}
+      <div className="mt-4 flex flex-wrap items-center gap-2">
+        <Link
+          href={hrefFor({ category: undefined })}
+          className={cn(
+            "rounded-full px-3 py-1 text-xs font-medium transition-colors border",
+            !params.category
+              ? "border-primary bg-primary text-primary-foreground shadow-xs"
+              : "border-border bg-card text-muted-foreground hover:border-primary hover:text-foreground"
+          )}
+        >
+          All Categories
+        </Link>
+        {CATEGORIES.map((c) => (
+          <Link
+            key={c}
+            href={hrefFor({ category: c })}
+            className={cn(
+              "rounded-full px-3 py-1 text-xs font-medium transition-colors border",
+              params.category === c
+                ? "border-primary bg-primary text-primary-foreground shadow-xs"
+                : "border-border bg-card text-muted-foreground hover:border-primary hover:text-foreground"
+            )}
+          >
+            {c}
+          </Link>
+        ))}
+      </div>
+
       <div className="mt-6 flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
         <span>
           {total} {total === 1 ? "course" : "courses"}

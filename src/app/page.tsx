@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { Award, BarChart3, Bot, BookOpen, ListChecks, Search } from "lucide-react";
 import { CourseCard } from "@/components/course-card";
+import { DemoStrip } from "@/components/demo-strip";
+import { HeroSearch } from "@/components/hero-search";
 import { buttonClass } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { searchCourses, type CatalogCourse } from "@/lib/catalog";
@@ -66,7 +68,7 @@ export default async function Home() {
             EduMind is a learning platform where every course comes with its own AI assistant, auto-generated quizzes,
             progress tracking and certificates.
           </p>
-          <div className="mt-10 flex flex-wrap justify-center gap-3">
+          <div className="mt-8 flex flex-wrap justify-center gap-3">
             <Link href="/courses" className={buttonClass("primary", "lg")}>
               Browse courses
             </Link>
@@ -74,8 +76,12 @@ export default async function Home() {
               Teach on EduMind
             </Link>
           </div>
+
+          <HeroSearch />
         </div>
       </section>
+
+      <DemoStrip />
 
       {popular.length > 0 && (
         <section className="mx-auto max-w-7xl px-4 pb-20">

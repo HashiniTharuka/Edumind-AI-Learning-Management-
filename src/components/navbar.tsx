@@ -2,6 +2,7 @@ import Link from "next/link";
 import { GraduationCap, LogOut } from "lucide-react";
 import { logout } from "@/app/actions/auth";
 import { buttonClass } from "@/components/ui/button";
+import { UserMenu } from "@/components/user-menu";
 import { getCurrentUser } from "@/lib/dal";
 
 export async function Navbar() {
@@ -38,31 +39,18 @@ export async function Navbar() {
           )}
         </div>
 
-        <div className="ml-auto flex items-center gap-2">
+        <div className="ml-auto flex items-center gap-3">
           {user ? (
-            <>
-              <div className="hidden text-right sm:block">
-                <div className="text-sm font-medium leading-tight">{user.name}</div>
-                <div className="text-xs capitalize text-muted-foreground">{user.role}</div>
-              </div>
-              <span className="grid size-9 place-items-center rounded-full bg-accent text-sm font-semibold text-accent-foreground">
-                {user.name.charAt(0).toUpperCase()}
-              </span>
-              <form action={logout}>
-                <button className={buttonClass("ghost", "sm")} aria-label="Sign out" title="Sign out">
-                  <LogOut className="size-4" />
-                </button>
-              </form>
-            </>
+            <UserMenu user={{ id: user.id, name: user.name, email: user.email, role: user.role }} />
           ) : (
-            <>
+            <div className="flex items-center gap-2">
               <Link href="/login" className={buttonClass("ghost", "sm")}>
                 Sign in
               </Link>
               <Link href="/register" className={buttonClass("primary", "sm")}>
                 Get started
               </Link>
-            </>
+            </div>
           )}
         </div>
       </nav>
